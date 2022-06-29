@@ -5,7 +5,7 @@
 
 | 用途 | 配置 | 数量 | 公网IP | 入访端口 | 出访端口 |
 | ------ | ------ | ------ | ----- | ----- | ---- |
-| IM服务 | 8C16G | 1 | 需要 |  80/1883/8888/18080 |  无 |
+| IM服务 | 8C32G | 1 | 需要 |  80/1883/8888/18080 |  无 |
 | 数据库 | 8C16G | 1 | 不需要 | 内网互通 |  内网互通 |
 | 发送压测机 | 4C8G | 1 | 需要 | 无 |   80/1883/18080 |
 | 接收压测机 | 4C8G | 1 | 需要 | 无 |   80/1883/18080 |
@@ -42,8 +42,8 @@ netty.epoll true
 
 3. ```bin/wildfirechat.sh```
 ```
-JAVA_OPTS="$JAVA_OPTS -Xmx12G"
-JAVA_OPTS="$JAVA_OPTS -Xms12G"
+JAVA_OPTS="$JAVA_OPTS -Xmx24G"
+JAVA_OPTS="$JAVA_OPTS -Xms24G"
 ```
 
 修改完这些之后，进入bin目录执行 nohup ./wildfirechat.sh 2>&1 &，这样IM服务就部署完成了。
