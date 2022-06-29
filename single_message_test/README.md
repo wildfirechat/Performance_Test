@@ -42,8 +42,8 @@ netty.epoll true
 
 3. ```bin/wildfirechat.sh```
 ```
-JAVA_OPTS="$JAVA_OPTS -Xmx6G"
-JAVA_OPTS="$JAVA_OPTS -Xms6G"
+JAVA_OPTS="$JAVA_OPTS -Xmx12G"
+JAVA_OPTS="$JAVA_OPTS -Xms12G"
 ```
 
 修改完这些之后，进入bin目录执行 nohup ./wildfirechat.sh 2>&1 &，这样IM服务就部署完成了。
