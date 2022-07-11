@@ -36,7 +36,7 @@
 
 测试视频：
 
-<a href="https://www.bilibili.com/video/bv1EY4y1n7iS"><img src="./bilibili_video_cover.png" alt="操作视频"></a>
+<a href="https://www.bilibili.com/video/bv1EY4y1n7iS"><img src="./single_message_test/bilibili_video_cover.png" alt="操作视频"></a>
 
 ## 群聊消息测试
 使用腾讯云北京6区一台标准S6云服务器8C32G和一台云MySQL服务8C16G，测试结果如下：
@@ -91,7 +91,7 @@
 
 测试视频：
 
-<a href="https://www.bilibili.com/video/bv1EY4y1n7iS"><img src="./bilibili_video_cover.png" alt="操作视频"></a>
+<a href="https://www.bilibili.com/video/bv1EY4y1n7iS"><img src="./group_message_test/bilibili_video_cover.png" alt="操作视频"></a>
 
 ## 聊天室消息测试
 聊天室消息测试请看[这里](./chatroom_message_test/)。
