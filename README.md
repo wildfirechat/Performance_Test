@@ -96,7 +96,7 @@
 
 测试视频：
 
-<a href="https://www.bilibili.com/video/bv1EY4y1n7iS"><img src="./group_message_test/bilibili_video_cover.png" alt="操作视频"></a>
+<a href="https://www.bilibili.com/video/BV1dB4y1H7dn"><img src="./group_message_test/bilibili_video_cover.png" alt="操作视频"></a>
 
 ## 聊天室消息测试
 聊天室消息测试请看[这里](./chatroom_message_test/)。
