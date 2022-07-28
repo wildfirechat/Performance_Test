@@ -1,1 +1,164 @@
 # 野火专业版IM服务聊天室消息性能测试
+
+## 环境准备
+准备如下硬件资源：
+
+| 用途 | 配置 | 数量 | 公网IP | 入访端口 | 出访端口 |
+| ------ | ------ | ------ | ----- | ----- | ---- |
+| IM服务 | 8C16G | 1 | 需要 |  80/1883/8888/18080 |  无 |
+| 数据库 | 2C4G | 1 | 不需要 | 内网互通 |  内网互通 |
+| 发送压测机 | 4C8G | 1 | 需要 | 内网互通 |  内网互通 |
+| 接收压测机 | 4C8G | 1 | 需要 | 内网互通 |  内网互通 |
+
+建议直接购买云服务器和云MySQL进行压测，云服务都是经过优化的，可以直接压测使用。如果是自建服务，需要从网上找一下系统优化方法优化系统配置（至少openfiles改成10万以上）。避免使用个人PC来进行压测，因为个人PC环境有可能有限制性能的情况。
+
+测试过程中要用到手机连接接收消息，所以需要用到外网，需要尽可能用最大的网络带宽。建议使用云服务器的按量计费方式，按流量计费可以选择把带宽设置为最大。
+
+操作系统使用CentOS，其它Linux系统也行，不建议使用非Linux系统。
+
+## 安装依赖工具
+野火IM服务只依赖Java，CentOS使用下述命令安装，其它系统请自行查找方法。
+```
+yum install java-1.8.0-openjdk-headless.x86_64
+```
+
+## 部署IM服务
+购买完云服务器后，就得到了云服务器的公网IP地址和内网IP地址，联系野火来获取***公网IP+内网IP双网环境（手机使用外网，测试工具使用内网）***的试用软件包。把软件包上传到IM服务器，解压，然后做出如下配置：
+1. ```config/wildfirechat.conf```
+```
+server.ip IM服务的内网IP
+server.backup_address  IM服务的外网IP:80:1883:8883
+#使用mysql数据库
+embed.db 0
+## 各种限频的大小改为1000000
+http.admin.rate_limit 1000000
+client.request_rate_limit 1000000
+## 下面这个配置是关掉的，要打开
+netty.epoll true
+```
+> 上面两个地方配置为IM服务的内外网IP地址。
+
+2. ```config/c3p0.xml```
+正确添加数据库JDBC、用户名和密码。
+
+3. ```bin/wildfirechat.sh```
+```
+JAVA_OPTS="$JAVA_OPTS -Xmx10G"
+JAVA_OPTS="$JAVA_OPTS -Xms10G"
+```
+
+修改完这些之后，进入bin目录执行 nohup ./wildfirechat.sh 2>&1 &，这样IM服务就部署完成了。
+
+## 部署应用服务
+在IM服务下载应用服务，地址在[http://static.wildfirechat.cn/app-server-release-0.58.tar.gz](http://static.wildfirechat.cn/app-server-release-0.58.tar.gz`)。下载后解压，使用命令 ``` java -jar app-0.58.jar ``` 来启动应用服务。等手机登陆成功后再停掉应用服务。
+
+## 观察用户
+需要手机登陆测试账户，在测试过程中观察手机消息状态。修改手机客户端中的应用服务和IM服务地址为IM服务器的公网IP地址，另外还需要设置一下协议栈的网络模式。Android的```ChatManager```有```public void setBackupAddressStrategy(int strategy)```这个方法，在connect之前调用参数为2。iOS的在```AppDelegate.m```中搜索```setBackupAddressStrategy```，打开注释，参数改为2。运行手机后用SuperCode 66666 登陆。登陆成功后就可以关掉应用服务了。
+
+后面要进入到聊天室内观察测试情况。
+
+## 配置发送服务
+在专业版IM服务软件包目录下有个```stress_test```目录，目录中有说明下载工具地址，下载测试工具到发送服务器，解压后得到一个可执行程序```wfcstress```和一个配置文件```config.toml```。
+
+把配置文件中的内容替换成如下:
+```
+# IM服务基础配置
+[IMConfig]
+## Host为专业版授权地址，如果其它地址测测试失败。
+Host = "IM服务内网ip地址"
+## 如果更改多客户端绑定端口，请把HttpPort改为定制的端口。
+HttpPort = 80
+AdminPort = 18080
+AdminSecret = 123456
+## Lite是否轻量模式，在lite为true时，压测工具只发送不会接收消息。如果测试聊天室功能请记得关闭此开关。
+Lite = true
+## 消息内容
+## 较短文本消息内容，12个汉字，长度36B
+MessageContent = "这是一个很短的文本内容！"
+
+# 测试聊天室。测试程序会创建SendUserCount个发送客户端并建立长链接。同时再创建ChatroomMemberCount个接收客户端并建立长链接。所有客户端同时加入同一个聊天室。
+# 发送客户端并行循环发送消息。发送客户端和接收客户端同时接收消息。注意基础配置中的Lite配置为false
+[TestChatroomConfig]
+## 是否开启此项测试
+Enable = true
+## 测试聊天室id
+ChatroomId = "chatroom1"
+
+## 测试发送用户的前缀，用户ID为 ${SendUserPrefix}_i，SendUserPrefix U_ ，则用户ID为：U_0，U_1,U_2...。
+## 用户的clientid为 用户id加上 c_, 比如c_U_0, c_U_1, c_U_2...。
+SendUserPrefix = "U_"
+## 发送消息用户数量，一般这个数字不要太大。
+SendUserCount = 100
+## 用户id的起始数，如果您有多台电脑测试，需要确保用户id不能重复。
+SendUserStart = 0
+
+## 客户端循环发送消息，此配置为发送消息的间隔，单位为毫秒。
+SendMessageInterval = 10
+
+## 是否跳过确认直接开始测试
+SkipConfirm = false
+
+## 循环次数。发送消息的总数为：SendUserCount * Loop；消息分发总数为 SendUserCount * (SendUserCount + ChatroomMemberCount) * Loop
+Loop = 100
+```
+上述配置中，host要改为IM服务的内网IP地址。
+
+## 配置接收服务
+同发送服务配置，把测试工具下载一份到接收服务器。解压后修改配置文件```config.toml```，替换配置如下:
+```
+# IM服务基础配置
+[IMConfig]
+## Host为专业版授权地址，如果其它地址测测试失败。
+Host = "IM服务内网ip地址"
+## 如果更改多客户端绑定端口，请把HttpPort改为定制的端口。
+HttpPort = 80
+AdminPort = 18080
+AdminSecret = 123456
+## Lite是否轻量模式，在lite为true时，压测工具只发送不会接收消息。如果测试聊天室功能请记得关闭此开关。
+Lite = false
+## 消息内容
+## 较短文本消息内容，12个汉字，长度36B
+MessageContent = "这是一个很短的文本内容！"
+
+# 测试聊天室。测试程序会创建SendUserCount个发送客户端并建立长链接。同时再创建ChatroomMemberCount个接收客户端并建立长链接。所有客户端同时加入同一个聊天室。
+# 发送客户端并行循环发送消息。发送客户端和接收客户端同时接收消息。注意基础配置中的Lite配置为false
+[TestChatroomConfig]
+## 是否开启此项测试
+Enable = true
+## 测试聊天室id
+ChatroomId = "chatroom1"
+
+## 测试发送用户的前缀，用户ID为 ${ChatroomMemberPrefix}_i，ChatroomMemberPrefix RU_ ，则用户ID为：RU_0，RU_1, RU_2...。
+## 用户的clientid为 用户id加上 c_, 比如c_RU_0, c_RU_1, c_RU_2...。
+ChatroomMemberPrefix = "RU_"
+## 接收用户数量
+ChatroomMemberCount = 2000
+## 用户id的起始数，如果您有多台电脑测试，需要确保用户id不能重复。
+ChatroomMemberStart = 0
+
+## 是否跳过确认直接开始测试
+SkipConfirm = true
+
+## 长链接保持时长，单位是秒，一般保持30分钟即可。
+ConnDuration = 1800
+```
+上述配置中，```host```设置为IM服务公网IP地址。```Lite```要设置为false才能接收消息。
+
+## 测试
+### 观察者进入聊天室
+连上一到两台（或者更多也可以）手机，然后进入到发现页的聊天室页，进入到第一个聊天室，聊天室的id为```chatroom1```，与发送和接收测试配置一致。
+
+### 连上聊天室成员
+登陆到接收服务，执行：
+```
+nohup ./wfcstress 2>&1 &
+tail -f nohup.out
+```
+压测工具会模拟2000个客户端，连接并进入```chatroom1```聊天室，并保持30分钟。
+
+### 发送测试
+登陆到发送服务，执行：
+```
+./wfcstress
+```
+压测工具会模拟100个客户端，连接并进入```chatroom1```聊天室，在聊天室内循环发送消息。
