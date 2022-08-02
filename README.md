@@ -152,7 +152,7 @@
 
 测试视频：
 
-<a href="https://www.bilibili.com/video/BV1VW4y117p9"><img src="./single_message_test/chatroom_message_test.png" alt="操作视频"></a>
+<a href="https://www.bilibili.com/video/BV1VW4y117p9"><img src="./chatroom_message_test/bilibili_video_cover.png" alt="操作视频"></a>
 
 ## 性能的估算
 要想估算好消息的性能，首先需要知道消息都有那些阶段和这些阶段的消耗资源情况，发送一条消息包括：
