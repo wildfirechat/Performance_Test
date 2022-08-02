@@ -236,4 +236,4 @@ tail -f nohup.out
 
 ### 测试视频
 为了帮助大家自行进行测试，我们录制了视频放到了B站，请点击下面视频观看:
-<a href="https://www.bilibili.com/video/bv1EY4y1n7iS"><img src="./single_message_test/bilibili_video_cover.png" alt="操作视频"></a>
+<a href="https://www.bilibili.com/video/bv1EY4y1n7iS"><img src="./bilibili_video_cover.png" alt="操作视频"></a>
