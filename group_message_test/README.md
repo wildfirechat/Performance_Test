@@ -33,7 +33,7 @@ http.admin.rate_limit 1000000
 client.request_rate_limit 1000000
 ## 消息队列大小改为10万，这样当手机离线后发送10万条以内消息，上线后可以都收到。
 message.max_queue 100000
-## 下面这个配置是关掉的，要打开
+## 下面这个配置默认是关掉的，需要打开
 netty.epoll true
 ```
 2. ```config/c3p0.xml```

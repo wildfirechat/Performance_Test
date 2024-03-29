@@ -33,7 +33,7 @@ embed.db 0
 ## 各种限频的大小改为1000000
 http.admin.rate_limit 1000000
 client.request_rate_limit 1000000
-## 下面这个配置是关掉的，要打开
+## 下面这个配置默认是关掉的，需要打开
 netty.epoll true
 ```
 > 上面两个地方配置为IM服务的内外网IP地址。
