@@ -155,7 +155,7 @@
 <a href="https://www.bilibili.com/video/BV1VW4y117p9"><img src="./chatroom_message_test/bilibili_video_cover.png" alt="操作视频"></a>
 
 ## 集群性能测试
-野火IM服务专业版支持集群部署，在集群部署时性能不是简单的资源相加，因为节点之间RPC需要消耗不少资源。关于集群模式下野火的性能及得出集群性能估算方法请参考[这里](./cluter_message_test)。
+野火IM服务专业版支持集群部署，在集群部署时性能不是简单的资源相加，因为节点之间RPC需要消耗不少资源。关于集群模式下野火的性能及得出集群性能估算方法请参考[这里](./cluster_message_test)。
 
 ## 性能的估算
 要想估算好消息的性能，首先需要知道消息都有那些阶段和这些阶段的消耗资源情况，发送一条消息包括：
