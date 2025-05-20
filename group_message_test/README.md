@@ -48,7 +48,7 @@ JAVA_OPTS="$JAVA_OPTS -Xms24G"
 修改完这些之后，进入bin目录执行 nohup ./wildfirechat.sh 2>&1 &，这样IM服务就部署完成了。
 
 ## 部署应用服务
-在IM服务下载应用服务，地址在[http://static.wildfirechat.cn/app-server-release-0.58.tar.gz](http://static.wildfirechat.cn/app-server-release-0.58.tar.gz`)。下载后解压，修改config目录下的```im.propertie```：
+在IM服务下载应用服务，地址在[http://static.wildfirechat.cn/app-server-release-latest.tar.gz](http://static.wildfirechat.cn/app-server-release-latest.tar.gz`)。下载后解压，修改config目录下的```im.propertie```：
 ```
 im.welcome_for_new_user=
 im.welcome_for_back_user=
